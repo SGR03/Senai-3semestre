@@ -1,0 +1,69 @@
+AULA 5 
+
+Liga todas as VMs 
+
+Dentro da VM XP 
+    Entra no putty e acessa o Berlim 
+    faz o teste do ping 
+
+OBS:o teste vai falhar, pois o firewall está ligado
+    
+    desligue e repita o mesmo processo
+    entre no firefox
+    baixe o MobaXterm versão free, Portable
+
+Pelo putty do windownx xp, entre em DENVER 
+    apt update 
+    apt upgrade -y
+    apt install apache2 -y
+    systemctl status apache2.service (verifica se está ativo)
+    
+OBS: Servidor WEB = HTTP = para criar diretório, e dentro dele ter um index.html
+
+    cp -vbf /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/site.conf
+    vi /etc/vim/vimrc "para habilitar a linha"
+    vi /etc/apache2/sites-available/site.conf, faz as configurações necessárias
+    
+    
+    "que estão localizadas na foto do git" 
+    
+
+    systemctl restart apache2.service
+    mkdir /var/www/html/site
+    vi /var/www/html/site/index.html
+    <html> Site do SENAI INFORMATICA - "nome" </html>
+    salva
+    systemctl restart apache2.service
+    a2ensite sites.conf 
+    a2dissite
+    a2dissite 000-default.conf
+    systemctl restart apache2.service
+    systemctl status apache2.service
+    recarrega a página e vai da erro "professor fez alguma coisa errada"
+
+    *Arrumando o erro*
+
+
+    mv /etc/apache2/sites-available/sites.conf /etc/apache2/sites-available/site.conf
+    vai ter que tirar o "s" do sites 
+    vi /etc/apache2/sites-available/site.conf
+    salva 
+    systemctl restart apache2.service
+    a2ensite sites.conf 
+    a2dissite
+    a2dissite 000-default.conf
+    systemctl restart apache2.service
+    systemctl status apache2.service
+    *recarregue a página e funcionará*
+    cat /var/log/apache2/access.site.log (para saber quem acessou o site)
+
+Explicação de DNS, para facilitar o entendimento  
+
+https://www.youtube.com/watch?v=epWv0-eqRMw
+https://www.youtube.com/watch?v=cRneZs9Lvno
+https://www.youtube.com/watch?v=ACGuo26MswI 
+
+
+
+
+
