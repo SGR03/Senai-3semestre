@@ -1,0 +1,81 @@
+Aula 3 - montagem do cenário 
+
+
+Para acesso remoto: 
+
+1)acessar AnyDesk  link:https://anydesk.com/pt/downloads/windows
+2)máquina m1-n3@ad (específico de cada máquina)
+3)colocar a senha  
+
+Acessar o virtualbox:
+
+1)importar máquina 
+2)C:/Vms/OVAs
+3)clima na primeira VM (Debian 10.7 base )
+4)muda o nome para (BERLIM) e desmarca a placa de rede (intel)
+5)faz a importação 
+
+Configuração da máquina 
+
+1)(TELA)aumentar a memória para 128 MB
+2)controladora gráfica VMSVGA
+3)(REDE)
+	-1 adaptador: NAT, nome NAT
+	-2 adaptador: rede interna, nome REDE_INTERNA 
+
+Acessar a VM BERLIM
+
+1)colocar o usuário: root
+2)senha ***
+3)nano /etc/network/interfaces
+4)faz a alteração das networks, coloca os IPs 
+5)restarta ( systemctl restart network )
+6)verifica se está ativo ( systemctl status restart network ) 
+7)para instalar alguns pacotes necessários ( apt update )
+8)apt upgrade -y
+9)hostnamectl set-hostname SRVFW-BERLIM
+10)para a máquina validar o nome da um 
+	-exit
+	-acessa o root novamente 
+
+Possibilitar que a máquina tenha acesso a internet
+
+OBS: caso prefira usar o editor de texto VIM, dá um vim apt install -y
+
+1)apt install openssh-server -y ( para acessar remotamente )
+
+fazer nova importação de VM
+
+1)C:/Vms/OVAs
+2)clima VM (WXPProSP3)
+3)muda o nome para (CLIXP-TOQUIO) e desmarca a placa de rede
+4)faz a importação
+
+Configuração da máquina 
+
+1)(TELA)aumentar a memória para 128 MB
+2)(AUDIO)desabilitar áudio 
+3)(REDE) o adaptador 1 vai ser rede interna
+
+acessar a VM TOQUIO
+
+1)coloca a primeira opção de yes
+2)coloca primeira opção de install
+3)coloca no "no"
+4)finish
+5)entra na configuração do MY computer
+6)network 
+7)entra nas propriedades do local area connection e muda o TCP/IP
+8)IP: 172.31.0.251
+9)Subnet: 255.255.255.0
+10)Gateway: 172.31.0.254
+11)DNS: 8.8.8.8
+
+encerra a conexão da VM
+
+1)(ARMAZENAMENTO) adiciona um CDROM vázio
+2)entra na máquina de novo 
+3)da um CTRL
+4)clica em dispositivo
+5)inserir dispositivo de imagem 
+6)concluir a instalação e da o reboot

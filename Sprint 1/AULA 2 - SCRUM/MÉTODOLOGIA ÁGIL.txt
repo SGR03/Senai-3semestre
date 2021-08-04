@@ -1,0 +1,63 @@
+SCRUM - Metodologia Ágil
+
+    No Scrum, todo o foco é dado ao trabalho em equipe, todas as métricas são do time, a responsabilidade para entrega é de todos!
+    (e assim por diante)
+
+    O Scrum é um método ágil muito leve, talvez ai esteja a razão pela qual é o mais popular mundialmente falando.
+
+    Organização de projetos
+
+        * Product Backlog
+        * Sprint Tasks
+        * Daily Scrum
+        * Compieted Features
+
+    PILARES
+
+        - Transparência (todos os aspectos significativos do projeto devem ser de conhecimento de todos os envolvidos)
+
+        - Inspeção (analisar cuidadosa e criticamente a forma de trabalho, visando encontrar pontos de melhoria! Essa inspeção deve ser tão frequente
+        quando possível, mas não frequente a ponto de atrapalhar o andamento do projeto)
+
+        - Adaptação (todos os pontos que estejam desviando do padrão de quanlidade do time que estejam atrapalhando o progresso ou que não fazem
+        sentido devem ser corrigidos, adaptados, aperfeiçoados)
+
+    PAPÉIS
+
+        Scrum Master - tem como missão principal garantir seu cumprimento por todos, não apenas dentro do time mas na organização inteira.
+        Líder-servidor que puxa a melhoria contínua.
+            Validado;
+            Deve ser feito;
+            Estamos fazendo;
+            Já foi feito.
+
+        Product Owner - é o representante máximo dos desejos do cliente dentro do Time Scrum. É ele que conhece o problema, as "dores", o retorno
+        esperado pelo projeto.
+
+        Time - todo profissional que trabalha no desenvolvimento do produto ou sistema o ideal é que o time seja o mais multi-funcional 
+        quanto possível.
+
+    CERIMÔNIAS SCRUM (Sprint´s = pequenas entregas)
+
+        Sprint Planning -> Planejamento
+        Scrum -> Daily
+        Sprint Review -> Entrega
+        Sprint Retrospectiva (Algo para o time) -> Trabalhamos da melhor forma?
+
+    ARTEFATOS 
+
+        Product Backlog - Nossa solução ao problema que nos foi passado
+        Sprint Backlog - "quebrar" esta solução em etapas (itens que serão trabalhados no projeto)
+        Incremento - possíveis alterações no projeto
+        Definição de Pronto - O que realmente está pronto? O que foi desenvolvido, foi testado?
+
+TRELO, JIRA
+
+    Ferramentas que permitem a aplicação de uma metodologia ágil (Scrum, entre diversas)
+
+IMPORTANTE - Conheça seu público-alvo!
+    Sprint -> 1-4 semanas
+
+LINKS
+
+    https://mindmaster.com.br/scrum-master/
