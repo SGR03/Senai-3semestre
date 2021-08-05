@@ -1,0 +1,113 @@
+AULA 6 
+
+*Ligue todas as VMs*
+
+OBS: não esqueça de executar o comando ./firewall.sh no SRVFW-BERLIM
+
+VM XP = TOQUIO
+
+1)dentro do putty, acessa o Berlim 
+2)logue como aluno
+3)entra no root: su -
+4)emita esse comando: ./firewall.sh
+5)dentro do putty, acessa o Denver 
+6)logue como aluno
+7)entra no root: su -
+8)emita esse comando: apt install bind9 bind9-doc dnsutils -y
+10)systemctl status bind9.service
+
+-----------------------------------------
+
+1)desliga as máquinas do putty
+2)desligue o XP
+3)modifique o sistema para memória de 1024
+4)ligue de novo
+5)logue novamente no Denver pelo putty
+6)apt install bind9 bind9-doc dnsutils -y
+7)ls /etc/bind/
+8)vi /etc/bind/named.conf.local
+9)faz as alterações que estão na "imagem 1.0"
+10)named-checkconf "verfica se tem algum erro"
+11)cp -vbf /etc/bind/db.local /etc/bind/db.projetos.lin.br
+12)vi /etc/bind/db.projetos.lin.br
+13)faz as alterações que estão na "imagem 2.0"
+14)named-checkconf "verfica se tem algum erro"
+15)cp -vbf /etc/bind/db.127 /etc/bind/db.0.31.172
+16)vi /etc/bind/db.0.31.172
+17)faz as alterações que estão na "imagem 3.0"
+18)named-checkconf
+19)vi /etc/bind/named.conf.options
+20)faz as alterações que estão na "imagem 4.1 e 4.2" na respectiva sequência 
+21)named-checkconf
+22)systemctl restart bind9.service
+23)cat /etc/resolv.conf
+24)vi /etc/resolv.conf
+25)faz as alterações que estão na "imagem 5.0"
+
+----------------------------------------
+Configurações de IP 
+
+1)my computer
+2)my networks
+3)view networks connections 
+4)local area connection
+5)TCP/IP
+6)muda só o DNS: 172.31.0.253
+
+----------------------------------------
+Volta no putty, Denver
+
+1)nslookup srv-denver
+
+----------------------------------
+Importar nova VM
+
+1)WindowsServer2008R2_DC
+2)SRVDC-NAIROBI
+3)desmarca a placa de rede 
+4)leva para o grupo 
+5)34MB de memória de vídeo (monitor)
+    -controladora gráfica VboxSVGa
+6)2048 de memória ram (sistemas)
+7)windowns 2003 (64-bit) (geral)
+8)desabilita o áudio (audio)
+9)habilita placa de rede: rede interna
+10)nome REDE_SRV
+
+-------------------------------------
+
+Liga a VM
+
+OBS: toda vez que ligar repita essa sequência 
+
+aperta Ctrl direito 
+entrada
+teclado
+inserir crtl-alt-del
+
+OBS: vai aparecer para fazer uma instalação, e coloca pra depois
+OBS: toda vez que desligar faz esse processo
+
+desliga a máquina:
+    -setinha do lado do log off
+    -shutdown 
+    -hardware installtion Planened
+    -ok
+
+
+adiciona um CDROM vázio (armazenamento)
+liga a máquina de novo 
+ctrl do lado direito
+dispositivos 
+inserir imagem de CD
+instala clicando 2x na primeira opção
+reboot
+---------------------------------------------
+
+liga de novo
+
+dispositivos
+area de tranferencia compartilhada: bi-dimencional
+arrastar e soltar: bi-dimencional 
+desliga a máquina
+
