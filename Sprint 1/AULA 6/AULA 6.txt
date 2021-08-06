@@ -69,7 +69,7 @@ Importar nova VM
 5)34MB de memória de vídeo (monitor)
     -controladora gráfica VboxSVGa
 6)2048 de memória ram (sistemas)
-7)windowns 2003 (64-bit) (geral)
+7)windowns 2008 (64-bit) (geral)
 8)desabilita o áudio (audio)
 9)habilita placa de rede: rede interna
 10)nome REDE_SRV
