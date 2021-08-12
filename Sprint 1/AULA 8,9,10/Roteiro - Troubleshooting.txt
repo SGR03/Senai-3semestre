@@ -1,0 +1,188 @@
+####ROTEIRO####
+
+PROBLEMA: Empresa teve seu ambiente danificado por funcionário demitido
+
+OBJETIVO: Restabelecer o mais prontamente possível a infraestrutura do cliente
+
+PREMISSAS - TÉCNICAS
+	- Rede: 172.31.100.0/24
+	- Realizar a cópia (backup) de todo arquivo de configuração a ser alterado
+	- Estado dos serviços que serão analisados
+	- LOG de Sistema:
+		Alternar o terminal do Debian
+			alt+F(1-6)
+		Entrar no terminal 6
+			alt+F6
+		Mostrar as últimas 1000 linhas do arquivo de LOG
+			#tail -f -n 1000 /var/log/syslog			
+
+
+CENÁRIO - PREPARAÇÃO DO AMBIENTE
+(MODELO OSI - 7 CAMADAS)
+
+	7 - APLICAÇÃO (APPLICATION) - Navegador / Apache2 / FTP
+
+	6 - APRESENTAÇÃO (PRESENTATION) - Codificação
+
+	5 - SESSÃO (SESSION) - Autenticação
+
+	4 - TRANSPORTE (TRANSPORT) - TCP/UDP/ICMP | Divisão da parte física para a parte lógica do serviço
+
+	3 - REDE (NET) - ROTEADOR (DOMÍNIO DE 	BROADCAST) | Conectar redes diferentes | Segmentação
+
+	2 - ENLACE (LINK LAYER/FRAME) | Enquadramento da informação | Organização de termos binários (com começo, meio e fim) - SWITCH (DOMÍNIO DE COLISÃO)
+
+	1 - FÍSICA (PHYSICAL) | Wireless, Cabo | Energia elétrica convertida em 0s e 1s (binário) - HUB (REPETIDOR) / CONECTORIZAÇÕES
+
+FÍSICO (Virtualização - VirtualBox)
+
+	* Import das máquinas virtuais
+	* Configuração das interfaces de rede (NIC)
+	* Conexões de Switch
+
+LÓGICO (Sistema operacional)
+
+	* Configuração base
+		Hostname
+		Interface(s) de rede
+		Usuário/Grupo
+		Outra?
+
+	* Serviços
+		ACESSO REMOTO
+		ROTEAMENTO/NAT
+		DNS
+		WEB
+		DHCP
+		Outro?
+
+===================================================
+
+SRVLNX-NAIROBI
+Físico (Virtualização - VirtualBox)
+
+	* Import das máquinas virtuais
+	* Configuração das interfaces de rede (NIC)
+		A1 - NAT
+		A2 - REDE INTERNA: LAN Segment
+	* Conexões de Switch
+		LAN Segment
+
+LÓGICO (Sistema operacional)
+
+	* Configuração base
+		Hostname
+			SRVLNX-NAIROBI
+
+		Interface(s) de rede
+
+			enp0s8 - A2 (REDE INTERNA)
+				Address: 172.31.100.253
+				Netmask: 255.255.255.0
+
+			enp0s17 - A1 (NAT)
+				DHCP
+
+				#"editor" /etc/network/interfaces
+
+		Usuário/Grupo
+			#cat /etc/passwd
+		Outra?
+
+	* Serviços
+		ACESSO REMOTO (openssh-server)
+			Não existia instalação!
+
+		ROTEAMENTO/NAT
+
+		DNS (bind9)
+			#Arquivo com o Resolver 
+			/etc/resolv.conf
+			
+			#Arquivo de declaração das zonas
+			/etc/bind9.named.conf.local
+
+			#Arquivo de entrada de zona direta nairobi00.com.br
+			/etc/bind9/db.nairobi00.com.br
+
+			#Arquivo de entrada de zona reversa nairobi00.com.br
+			/etc/bind/db.reverso.nairobi00.com.br
+
+				PARA QUE SERVE UM DNS REVERSO?
+				R: Funciona como uma contra-prova, confirmação de identidade				
+
+				Declarar zona reversa (rede) - rede (exemplo: 100.31.172).in-addr.arpa.
+				Declarar as entradas da zona reversa (host) - ("o que falta")
+
+			/etc/bind/named.conf.options
+				Não foi alterado
+
+			Cópia dos arquivos acima para o diretório
+			/root/bkp/bind
+
+		WEB (apache2)
+			#Armazenamento da página existente
+			/var/www/site
+			
+			#Arquivos de configuração do Apache2
+				#páginas disponíveis
+					/etc/apache2/sites-available
+				#Páginas ativas
+					/etc/apache2/sites-enable
+
+			# Verificar a porta de funcionamento do serviço HTTP (ss -ntpl
+			/etc/apache2/ports.conf
+
+--------------------------------------
+
+SRVWIN-RIO
+Físico (Virtualização - VirtualBox)
+
+	* Import das máquinas virtuais
+	* Configuração das interfaces de rede (NIC)
+		A1 - LAN Segment
+	* Conexões de Switch
+		LAN Segment
+
+LÓGICO (Sistema operacional)
+
+	* Configuração base
+		Hostname
+			SRVWIN-RIO
+		Interface(s) de rede
+			172.31.100.254
+		Usuário/Grupo
+		Outra?
+
+	* Serviços
+		DHCP - Dynamic Host Configuration Protocol
+			REDE
+			MÁSCARA
+			GATEWAY
+			RANGE
+
+--------------------------------------
+
+CLIWIN-OSLO
+Físico (Virtualização - VirtualBox)
+
+	* Import das máquinas virtuais
+	* Configuração das interfaces de rede (NIC)
+		AI - LAN Segment
+	* Conexões de Switch
+		LAN Segment
+
+LÓGICO (Sistema operacional)
+
+	* Configuração base
+		Hostname
+			sysdm.cpl (ou pelo cmd - "hostname")
+				CLTWIN-OSLO
+		Interface(s) de rede
+			DHCP
+		Usuário/Grupo
+			lusrmgr.msc
+		Outra?
+
+	* Serviços
+		ACESSO REMOTO

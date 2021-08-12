@@ -1,0 +1,50 @@
+####ROTEIRO####
+
+PROBLEMA: 
+
+OBJETIVO:
+
+PREMISSAS - TÉCNICAS
+	- Rede:
+	- Realizar a cópia (backup) de todo arquivo de configuração a ser alterado
+	- Estado dos serviços que serão analisados
+	- LOG de Sistema
+
+CENÁRIO - PREPARAÇÃO DO AMBIENTE
+(MODELO OSI - 7 CAMADAS)
+
+	7 - APLICAÇÃO (APPLICATION) - Navegador / Apache2 / FTP
+
+	6 - APRESENTAÇÃO (PRESENTATION) - Codificação
+
+	5 - SESSÃO (SESSION) - Autenticação
+
+	4 - TRANSPORTE (TRANSPORT) - TCP/UDP/ICMP | Divisão da parte física para a parte lógica do serviço
+
+	3 - REDE (NET) - ROTEADOR (DOMÍNIO DE 	BROADCAST) | Conectar redes diferentes | Segmentação
+
+	2 - ENLACE (LINK LAYER/FRAME) | Enquadramento da informação | Organização de termos binários (com começo, meio e fim) - SWITCH (DOMÍNIO DE COLISÃO)
+
+	1 - FÍSICA (PHYSICAL) | Wireless, Cabo | Energia elétrica convertida em 0s e 1s (binário) - HUB (REPETIDOR) / CONECTORIZAÇÕES
+
+FÍSICO (Virtualização - VirtualBox)
+
+	* Import das máquinas virtuais
+	* Configuração das interfaces de rede (NIC)
+	* Conexões de Switch
+
+LÓGICO (Sistema operacional)
+
+	* Configuração base
+		Hostname
+		Interface(s) de rede
+		Usuário/Grupo
+		Outra?
+
+	* Serviços
+		ACESSO REMOTO
+		ROTEAMENTO/NAT
+		DNS
+		WEB
+		DHCP
+		Outro?
