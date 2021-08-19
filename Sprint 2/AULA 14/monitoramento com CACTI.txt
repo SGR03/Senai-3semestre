@@ -1,0 +1,92 @@
+Monitoramento com o CACTI
+
+PROCESSO AO LIGAR AS MÁQUINAS
+
+    1) Berlim --> ./firewall.sh
+    2) Denver --> DNS, Apache2
+    3) TOQUIO --> Putty ou Mobaxterm
+    4) HELSINQUE --> Monitor Cacti
+    5) Nairobi --> Servidor DC
+
+NAIROBI
+
+1)Vá até Server Manager (canto inferior esquerdo) > Features > Add Features > Marque "SNMP Services" > Next > Install
+
+2) Neste mesmo painel (após a instalação ter sido concluída)
+
+Configuration > Services > SNMP Services > clique 2x > Stop
+
+3) Características:
+
+     AGENT
+
+     - Administrador.admin@projetos.win.br (Contact)
+     - Sao Paulo - Matriz (Location)
+
+     TRAPS
+            
+     - public > Add > 172.31.0.251 (IP)
+
+     SECURITY
+
+     - Comunnity: public (READ-ONLY)
+     -Accept SNMP packets from these hosts (segunda opção) > Add > 172.31.0.251
+
+
+
+CRIAR REGRA DE ENTRADA - FIREWALL 
+
+    Vá até Windows Firewall with Advanced Security > Inbound Roles
+
+        Role Type = port
+        Protocol and Ports = UDP - 161 (Specific local ports)
+        Action = Allow the connection
+        Profile = Domain, Private e Public
+        Name = SNMP-Libera-161
+
+TOQUIO
+
+4) Vamos criar um novo Dispositivo no Cacti 
+
+      - Descrição: SRVDC-NAIROBI
+      - Hostname: 172.31.0.252
+      - Generic SNMP
+
+        OBS: Caso de algum erro, desabilite o firewall do windows (Volte no cacti, de um f5)
+
+
+IMPORTANTE
+
+    Agora vamos fazer as configurações no Berlim e no Denver, por segurança, faça um snapshot das máquinas
+
+
+BERLIM
+
+    1) apt update -y
+    2) apt upgrade -y
+    3) apt install snmp snmpd -y
+    4) vi /etc/snmo/snmpd.conf 
+        Altere a linha 15 (udp: 161)
+        Altere a linha 51 (apague até 0 "-V")
+        Altere syslocation (nome-do-servidor) e syscontact (Admin <admin@projetos.lin.br>)
+    5) systemctl restart snmpd.service
+
+    Crie um novo Device (Core)
+    IP: 172.31.0.254
+
+    Adicione um novo gráfico (... Disk Bytes)
+
+
+DENVER
+
+    1) apt update -y
+    2) apt upgrade -y
+    3) apt install snmp snmpd -y
+    4) vi /etc/snmo/snmpd.conf 
+        Altere a linha 15 (udp: 161)
+        Altere a linha 51 (apague até 0 "-V")
+        Altere syslocation (nome-do-servidor) e syscontact (Admin <admin@projetos.lin.br>)
+    5) systemctl restart snmpd.service
+
+    Crie um novo Device (Core)
+    IP: 172.31.0.253
