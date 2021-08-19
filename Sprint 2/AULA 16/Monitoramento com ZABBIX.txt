@@ -1,0 +1,68 @@
+Cliente >>>>> Servidor
+
+Monitoramento=visibilidade
+
+Agente <<<>>>  Gerente
+       <<<<<<  Pulling: método de gerenciar os elementos selecionados
+        SNMP: Simple Network Management Protocol: protocolo de gerenciamento de rede simplificado
+Trap   >>>>>>
+ |
+Só mostra o que está de "errado" "alterado"
+
+MIB: Management Information Base : gerenciamento básico de informação 
+OID: Object Identifier : identificador de objeto 
+
+
+Ligue todas as VMS 
+
+OBS: trabalhar com o Log
+alt+f6
+emita o comando:tail -f -n 1000 /var/log/syslog
+
+importar uma nova VM 
+
+-Debian 10.7 Base
+-SRVMON-MOSCOU
+-desabilita a placa de rede
+-desmarca o VDI
+-adaptador 1  - rede interna: REDE_SRV
+
+
+acessa ele:
+
+OBS: trabalhar com o Log
+alt+f6
+emita o comando:tail -f -n 1000 /var/log/syslog
+
+-muda o hostname 
+-vim.tiny /etc/network/interfaces
+-imagem 1.0
+-restarta o serviço
+
+Nota: ip route, verifca o gateway
+
+-vim.tiny /etc/resolv.conf
+-imagem 2.0
+-restarta o serviço 
+-apt update
+- "S" 3 vezes
+-apt upgrade
+-enter
+-apt install vim openssh-server
+-vim /etc/vim/vimrc
+-imagem 3.0
+-vim /etc/ssh/sshd_config
+-imagem 4.0
+-restarta o serviço 
+-desliga o MOSCOU
+
+habilita o adaptador 2, para rede exclusiva de hospedeiro (host-only)
+
+-verifica primeiro a interface
+-vim /etc/network/interfaces
+-imagem 5.0
+-restart o ssh:  service sshd restart
+
+Nota: da um ip a e vê o ip que pegou para fazer o acesso com o putty do windows do senai
+
+acessa o putty como root

@@ -1,0 +1,222 @@
+﻿AULA 13 - INÍCIO DA SPRINT B MONITORAMENTO PROTOCOLO SNMP (16/08)
+
+Semana de monitoramento/Gerenciamento
+
+    Cacti - remodelado -> up (snmp)
+
+    Zabbix - muito utilizado (snmp/agentes)
+
+        * Instalação
+        * Host monitor
+        * Linux/Win
+
+    Para iniciarmos sua compreensão prática, vamos começar conversando sobre um protocolo o SNMP:
+    “SNMP é o protocolo padrão para monitoramento e gerenciamento de redes. A sigla SNMP é um acrônimo para “Simple Network Management 
+    Protocol” ou “Protocolo Simples de gerenciamento de redes”.
+
+    Os objetivos dessa aula serão:
+
+        * Divulgação do tema e situação de aprendizagem que vamos trabalhar;
+        * Demais informações sobre a SPRINT;
+        * Início do conteúdo com SNMP.
+
+-----------------------------------------------
+
+SMI - Structure of Management Informatics
+
+    * Define os campos, tipo, tamanho (template)
+    * Codificação (gerente)
+
+MIB - Management Informatics Base
+
+    * Define quais informações serão coletadas em cada Host;
+    * Modelo hierárquico
+
+SNMP - Simple Network Management Protocol
+
+    * Todo dispositivo que receber IP na rede (e gerar informações) será considerado um agente (envia as informações)
+    * Gerente - Servidor Centralizado (solicita as informações)
+
+    - As informações serão dadas em texto puro / número
+        Neste caso, necessitamos que um software (Zabbix, Cacti) faça o papel de "tradutor" (que nos mostrará as informações através de gráficos)
+    
+-----------------------------------------------
+
+PREPARAÇÃO DO AMBIENTE
+
+    * Importação de um Linux Debian 10
+
+        - Nome: SRVMON-HELSINQUE
+        - Desmarque a placa de rede
+        - Desabilite o áudio
+            - 128MB de vídeo (VMSVGA)
+            - Placa de rede (Interna): REDE_SRV
+
+        * IP - 172.31.0.251
+        * Instalar o SSH
+        * Apontamento do DNS (resol.conf)
+        * Teste de ping 8.8.8.8, www.uol.com.br, 172.31.0.254 (Berlim)
+
+-----------------------------------------------
+
+PASSO A PASSO
+
+    1) Coloque o SRVMON-HELSINQUE no mesmo grupo do Cenário 01
+
+    2) Ligue o Denver, Berlim (./firewall.sh) e o Tóquio
+
+    3) Ligue o SRVMON-HELSINQUE
+
+    4) Acesse o SRVMON-HELSINQUE pelo CLIXP-TOQUIO
+
+    5) Execute os testes de ping, atualização de pacotes, upgrade, etc
+
+    6) Instale os pacotes 'apt install cacti cacti-spine rrdtool librrds-perl -y'
+        
+        - Selecione "Apache2"
+        - Configurar banco de dados para cacti com dbconfig... = SIM
+            Senha para o banco de dados = Senai@132 (Confirme a senha)
+
+    7) Verifique as informações do Apache com 'dpkg -l apache2'
+
+    8) Verifique as informações do MariaDB com 'dpkg -l mariadb-server-10.3'
+
+    9) Edite o arquivo 'vim (ou nano) /etc/mysql/mariadb.conf.d/50-server.cnf'
+
+    10) Abaixo de '#MySQL/MariaDB default is...', cole as seguintes informações
+
+character-set-server = utf8mb4
+#collation-server = utf8mb4_general_ci
+collation-server = utf8mb4_unicode_ci
+character-set-server = utf8mb4
+innodb_flush_log_at_timeout = 4
+innodb_read_io_threads = 34
+innodb_write_io_threads = 17
+max_heap_table_size = 70M
+tmp_table_size = 70M
+join_buffer_size = 130M
+innodb_buffer_pool_size = 250M
+innodb_io_capacity = 5000
+innodb_io_capacity_max = 10000
+innodb_file_format = Barracuda
+innodb_large_prefix = 1
+
+    11) Reinicie os serviços com 'systemctl restart mariadb.service'
+        Verifique os status com systemctl status mariadb.service
+
+    12) Verifique a versão do php com 'php -v'
+
+    13) Altere o arquivo 'nano (ou vim) /etc/php/7.3/cli/php.ini'
+
+    14) Na linha 956, coloque 'data.timezone = America/Sao_Paulo
+
+    15) Altere o arquivo 'nano (ou vim) /etc/php/7.3/apache2/php.ini'
+
+    16) Na linha 956, coloque 'data.timezone = America/Sao_Paulo
+
+    17) Reinicie o Apache com 'systemctl restart apache2.service'
+        Verifique os status com systemctl status apache2.service
+
+    18) Intale o pacote 'apt install snmpd -y'
+
+    19) Altere o arquivo 'nano (ou vim) /etc/snmp/snmpd.conf'
+        
+        Na linha 15: agentAddress udp:161
+        Na linha 51: rocommunity public default
+
+    20) Reinicie o serviço com 'systemctl restart snmpd.service'
+        Verifique os status com systemctl status snmpd.service
+
+    21) Emita o comando 'snmpwalk -v2c -c public 172.31.0.251 | more
+        Essas serão as informações que serão traduzidas em um gráfico
+        
+    22) Emita o comando 'snmpwalk -v2c -c public 172.31.0.251 .1.3.6.1.2.1.1.1.0
+        Nome do Servidor e versão do Linux
+
+-----------------------------------------------
+
+NAVEGADOR CLIXP-TOQUIO
+
+    23) Pesquise 172.31.0.251/cacti
+        
+        * Nome do usuário: admin
+        * Senha: Senai@132
+
+-----------------------------------------------
+
+NOTA: No VirtualBox, faça um snapshot da máquina com todas essas configurações em funcionamento (para que caso algum problema ocorra futuramente,
+teremos como retornar para um estado seguro).
+
+-----------------------------------------------
+
+CACTI 
+
+    24) Create Device > + 
+
+        Características:
+
+            * Descrição: Servidor Cacti
+            * Hostname: 172.31.0.251
+            * Device Site Association: Core
+
+                O resto deixamos da forma que está (padrão)!
+
+    25) Vamos adicionar um novo template
+
+            Console > Dispositivos (clique sobre o nome do dispositivo que acabamos de criar) > (Editar)
+
+                Role a tela até "Associated Graph Templates"
+
+                    Add Graph Template > Unix - Ping Latency > Adicionar
+
+-----------------------------------------------
+
+CLIXP-TOQUIO (Instalação do pacote SNMP)
+
+    26) Vá até o Painel de Controle > Programas padrão > Add or Remove Programs > Add/Remove Windows Components (lado esq da tela) > 
+    > Management and Monitoring Tools > Next
+
+    27) Quando chegar na mensagem para adicionarmos um disco, botão direito sob o disco que aparece lá em baixo na tela (perto de "right control)
+
+    28) Escolher uma imagem de disco > C:\VMs\ISOs > en_windows_xp_professional_with_service_pack_3_x86_cd_vl_x14-73974
+
+    29) Finish
+
+-----------------------------------------------
+
+CLIXP-TOQUIO (Configuração do pacote SNMP)
+
+    30) Windows + R > service.msc 
+
+    31) Encontre o serviço 'SNMP Service' > clique 2x > Stop 
+
+        Características:
+
+            AGENT
+
+                * Administrador.admin@projetos.win.br (Contact)
+                * So Paulo - Matriz (Location)
+
+            TRAPS
+            
+                * public > Add > 172.31.0.251 (IP)
+
+            SECURITY
+
+                * Accept SNMP packets from these hosts (segunda opção) > Add > 172.31.0.251
+
+        Incie o serviço novamente: Aply > OK > Start
+
+    32) Vamos criar um novo Dispositivo no Cacti 
+
+        * Descrição: CLIXP-TOQUIO
+        * Hostname: 10.10.0.1
+
+        OBS: Caso de algum erro, desabilite o firewall do windows (Volte no cacti, de um f5)
+
+-----------------------------------------------
+
+MATERIAL DE APOIO
+
+	Introdução ao Gerenciamento de Redes - parte 4 - SNMP
+	(https://www.youtube.com/watch?v=PqgDoG4gLK0)
