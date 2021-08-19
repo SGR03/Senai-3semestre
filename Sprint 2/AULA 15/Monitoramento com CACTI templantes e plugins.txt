@@ -1,0 +1,21 @@
+AULA 15 - MONITORAMENTO COM CACTI TEMPLATES E PLUGINS
+
+Após a instalação e primeira configuração do CACTI, vamos verificar a utilização e templates e plugins que a comunidade produz e disponibiliza para todos os usuários dessa ferramenta.
+
+Como objetivo de trabalho para a aula de hoje vamos executar:
+Operação de máquinas virtuais;
+Importação de templates e plugins;
+Configuração e monitoramento dos ativos da rede;
+Criação de gráficos e tabelas de monitoramento;
+Com esse conteúdo você vai trabalhar para desenvolver as seguintes habilidades:
+INSTALAÇÃO E ADMINISTRAÇÃO DE SERVIÇOS DE GERENCIAMENTO E SEGURANÇA EM REDES
+8. Ter atenção a detalhes no monitoramento da rede. 
+22. Executar procedimentos de instalação de software para Inventário de Ativos e de Softwares:
+23. Executar procedimentos para gerenciamento de logs:
+
+ADMINISTRAÇÃO DE SERVIÇOS DE REDES LOCAIS E INTERNET
+1. Agir sistematizadamente na manutenção da rede, tendo em vista seu funcionamento.
+18. Controlar serviços de rede, com utilização de scripts.
+21. Identificar as causas das falhas no funcionamento da rede, realizando troubleshooting, tendo em vista necessidades de substituição, reparo ou atualização.
+
+
