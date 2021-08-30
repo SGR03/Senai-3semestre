@@ -1,0 +1,70 @@
+Aula 17
+
+Ligue todas as VMs
+
+1)Logue no Moscou, com o putty do windows
+
+Nota: não esqueça de emitir o comando ./firewall.sh no Berlim
+ 
+	1)wget https://repo.zabbix.com/zabbix/5.0/debian/pool/main/z/zabbix-release/zabbix-release_5.0-1+buster_all.deb
+	2)dpkg -i zabbix-release_5.0-1+buster_all.deb
+	3)apt update
+	4)apt install gnupg
+	5)wget https://dev.mysql.com/get/mysql-apt-config_0.8.13-1_all.deb
+	6)dpkg -i mysql-apt-config_0.8.13-1_all.deb
+	
+2)Vai abrir uma tela azul 
+
+	1)da um enter na primeira opção "server..."
+	2)da um enter na primeira opção "5.7"
+	3)desce com a setinha até o ok, e de um enter
+	4)apt update 
+	5)apt upgrade
+	6)ok 2 vezes 
+	7)apt install mysql-server
+	
+3)Etapa para inserção de senha do banco de dados 
+
+(tela azul)
+
+	1)Senai@132
+	2)systemctl status mysql.service
+	3)wget https://repo.zabbix.com/zabbix/5.0/debian/pool/main/z/zabbix-release/zabbix-release_5.0-1+buster_all.deb
+	4)dpkg -i zabbix-release_5.0-1+buster_all.deb
+	5)apt update 
+	6)apt install zabbix-server-mysql zabbix-frontend-php zabbix-apache-conf zabbix-agent
+
+4)Adequar banco de dados MySQL ao Zabbix
+	
+	1)mysql -uroot -p 
+	2)create database zabbix character set utf8 collate utf8_bin;
+	3)create user zabbix@localhost identified by 'Senai@132';
+	4)grant all privileges on zabbix.* to zabbix@localhost;
+	5)quit;
+	6)zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -uzabbix -p zabbix
+	
+Nota: espere o processo ser concluído
+	
+5)Informar a senha do database no arquivo de configuração do Zabbix Server
+	
+	1)vim /etc/zabbix/zabbix_server.conf
+	2)na linha 124, descomenta e insira a senha DBPassword=Senai@132
+	3)vim /etc/zabbix/apache.conf
+	4)Linha 20 e 30, descomentar e ajustar para America/Sao_Paulo, onde está escripo "europa..."
+	5)systemctl restart zabbix-server zabbix-agent apache2
+	6)systemctl enable zabbix-server zabbix-agent apache2
+	7)testa: http://192.168.56.101/zabbix
+
+6)Finalizar a instalção do Zabbix pelo navegador 
+
+	Acessa pelo http://192.168.56.101/zabbix
+
+		
+	1)next duas vezes
+	2)password: Senai@132, next
+	3)SRVMON_MOSCOU, next 
+	4)antes de finalizar, loga no Putty 
+	5)touch /usr/share/zabbix/conf/zabbix.conf.php
+	6)chown www-data /usr/sharead/zabbix/conf/zabbix.conf.php
+	7)back, next e finish 
+	8)acessa como admin, senha zabbix

@@ -1,0 +1,278 @@
+    PREMISSAS TÉCNICAS
+        Rede: 172.31.0.0/24
+        Cópia de segurança dos arquivos
+        Log
+            alt+f6]
+            #tail -f -n 1000 /var/log/syslog
+
+CENÁRIO - PREPARAÇÃO DO AMBIENTE
+    Host: 172.31.0.250/24
+
+FÍSICA (Virtualizador - VirtualBox)
+    Import. de máquina virtual
+        Debian 10.7 Base.ova
+    Configuração da interfaces de rede
+        Adaptador 1 - Rede Interna: Rede_SRV
+            Conectando ao switch Rede_SRV
+
+LÓGICA (Sistema Operacional)
+    Hostname
+        SRVMON-MOSCOU
+            #hostnamectl set-hostname SRMON-MOSCOU
+            #bash
+    Interface de rede
+        #ip a
+        #vim.tiny /etc/network/interfaces
+        enp0s3 -
+            auto enp0s3
+            iface enp0s3 inet static
+            address 172.31.0.250
+            netmask 255.255.255.0
+            gateway 172.31.0.254
+
+        RESTART DO SERVIÇO (exemplo)
+            #/etc/init.d/networking restart
+            #service networking restart
+            #systemctl restart networking.service
+
+        GARANTIR QUE O SO ACEITOU O GATEWAY
+            #ip route
+
+        TESTAR A COMUNICAÇÃO
+            ping para gateway
+            ping para internet IP
+
+        DNS (RESOLVER), APONTANDO PARA OS SERVIDORES DO NOSSO CENÁRIO
+            nameserver 172.31.0.253
+            name server 172.31.0.252
+
+        TESTAR O DNS RESOLVER
+            ping/nslookup para internet Nome
+
+    Configurações base
+        Atualizar a lista de pacotes de repositório
+            #apt update
+
+        Atualizar a distribuição
+            #apt upgrade
+
+        VIM (vim)
+            #apt install vim
+                Editar o programa
+                    #vim /etc/vim/vimrc
+                        Linha 26 - descomentar
+                        Linha 27 - criar set number
+
+        SSH (openssh-server)
+            #apt install openssh-server
+                Editar a configuração de acesso do SSH para permitir o ROOT
+                    #vim /etc/ssh/sshd_config
+                        Linha 32 - descomentei e alterei
+                            PermitRootLogin yes
+
+    Serviços específicos
+        Adicionar interface secundária para comunicação com o Windows
+            VirtualBox - ativar adaptador 2
+                Placa de rede exclusiva de hospedeiro (host-only)
+                    Host Only - Rede exclusiva, rede interna ("adaptador interno"), não utiliza a interface externa do Windows
+
+        Inteface do Linux
+            #vim /etc/network/interfaces
+                enp0s8
+                    auto enp0s8
+                    iface enp0s8
+                    dhcp
+        ZABBIX
+            zabbix.org
+                Versão 5.0 LTS > Debian > 10 (Buster) > MySQL > Apache
+
+            Instalar o banco de dadis MySQL 5.7
+
+                Validador de chaves
+                #apt install gnupg -y
+
+                Pacote de repositório
+                #wget https://dev.mysql.com/get/mysql-apt-config_0.8.13-1_all.deb   
+
+                    Instalar pacote
+                        #dpkg -i mysql-apt-config_0.8.13-1_all.deb
+
+                            1) OK
+                            2) Primeira opção (MySQL Server & Cluster...) > mysql-5.7
+                            3) "Primeiro OK"
+
+                    Update e upgrade dos pacotes
+                        # apt update
+                        # apt upgrade
+
+                Instalação do servidor
+                #apt install mysql-server
+                    Etapa para criação de senha do banco de dados: Senai@132
+
+                Validar o status do serviço
+                #systemctl status mysql.service
+
+            Seguir etapa do site: zabbix.org
+
+                Baixar arquivo de repositório do Zabbix
+                #wget https://repo.zabbix.com/zabbix/5.0/debian/pool/main/z/zabbix-release/zabbix-release_5.0-1+buster_all.deb
+
+                Instalação do pacote
+                #dpkg -i zabbix-release_5.0-1+buster_all.deb
+
+                Update dos pacotes
+                # apt update
+
+                instalar servidor Zabbix
+                #apt install zabbix-server-mysql zabbix-frontend-php zabbix-apache-conf zabbix-agent
+
+                Adequar banco de dados MySQL ao Zabbix
+                #mysql -uroot -p
+                mysql> create database zabbix character set utf8 collate utf8_bin;
+                mysql> create user zabbix@localhost identified by 'Senai@132';
+                mysql> grant all privileges on zabbix.* to zabbix@localhost;
+                mysql> quit;
+
+                Inserir o schema ao database do Zabbix
+                #zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -uzabbix -p zabbix
+
+                Informar a senha do database no arquivo de configuração do Zabbix Server
+                #/etc/zabbix/zabbix_server.conf
+                    Linha 124: descomentar e inserir a senha
+                        DBPassword=Senai@132
+                
+                Alterar timezone no PHP
+                #vim /etc/zabbix/apache.conf
+                    Linha 20 e 30: descomentar e ajustar para America/Sao_paulo
+
+                Reiniciar e Habilitar os serviços necessários
+                #systemctl restart zabbix-server zabbix-agent apache2
+                #systemctl enable zabbix-server zabbix-agent apache2
+
+                Finalizar a instalação do Zabbix pelo navegador
+                    http://(ip-host-only/zabbix/setup.php
+                        Exemplo: http://192.168.56.101/zabbix/setup.php
+
+                        - Insira a senha do banco (Senai@132)
+                        - Insira o nome do banco (SRVMON-MOSCOU)
+
+                Ajuste para esta instalação
+                    Caminho: /usr/share/zabbix/conf/zabbix.conf.php
+
+                    Criando arquivo vazio
+                    #touch /usr/share/zabbix/conf/zabbix.conf.php
+
+                    Ajustando a propriedade do arquivo para o Apache2
+                    #chown www-data /usr/share/zabbix/conf/zabbix.conf.php
+
+                Acessar o Zabbix
+                    Usuário: Admin
+                    Senha: zabbix
+            
+--------------------------------------------------------------
+
+INSTALAÇÃO DE AGENTE - LINUX
+
+    1) No Painel de gerenciamento do Zabbix, vá em:
+        Configuration > hosts > Create Host
+
+        * Altere o IP e o hostname do "Zabbix Server"
+        * Crie um agente para o SRVFW-BERLIM, SRVWEB-DENVER
+
+    Após a instalação
+        #apt install zabbix-agent
+
+    Ajuste no arquivo zabbix-agentd.conf (#cd /etc/zabbix)
+        3 linhas importantes
+            Linha 98 (Agent) ou 117 (Server): informar o servidor de monitoramento - modo passivo
+                Server=172.31.0.250
+
+            Linha 139 (Agent) ou 158 (Server): informar o servidor de monitoramento - modo ativo
+                ServerActive=172.31.0.250
+
+            Linha 148 (Agent) ou 169 (Server): descomentar e informar o nome do host que será monitorado (através deste nome)
+                Hostname=NOME_DO_DISPOSITIVO
+                Hostname=SRVFW-BERLIM
+
+    Reinicie o servio e veja se o mesmo está funcionando
+        #systemctl restart zabbix-agente.service
+        #systemctl status zabbix-agente.service
+        #ss -ntpl
+        #zabbix_agentd -p | more
+
+--------------------------------------------------------------
+
+INSTALAÇÃO DE AGENTE - WINDOWS
+
+    https://www.zabbix.com/download_agents?version=5.0+LTS&release=5.0.14&os=Windows&os_version=Any&hardware=amd64&encryption=No+encryption&packaging=Archive&show_legacy=0
+    1) Win > Any > amd64 > 5.0 LTS > No encryption > Archive
+        Download - https://cdn.zabbix.com/zabbix/binaries/stable/5.0/5.0.14/zabbix_agent-5.0.14-windows-amd64.zip
+
+        NOTA: Lembre de inserir o disco para a integração com seu pc raíz ("para o copiar e colar funcionar)
+
+    2) Salve a pasta no diretório 'Downloads'
+
+    3) No diretório raíz, crie uma pasta "Zabbix"
+        Mova o conteúdo das duas pastas (bin e conf) baixadas para esta pasta
+
+    4) No cmd, emita o comando (como admin)
+        c:\zabbix\zabbix_agentd.exe -c c:\zabbix\zabbix_agentd.conf -i
+    
+    5) Start o serviço com
+        services.msc (executar) > Zabbix.agent
+
+    6) Veja se o serviço está funcionando com um 
+        netstat -na | more (no cmd) 
+        c:\zabbix\zabbix_agentd.exe -p
+
+--------------------------------------------------------------
+
+INVENTÁRIO
+
+    Criação de um novo item (Configuration > Hosts > SRVFW-BERLIM (ou outro dispositivo) > Items > Create item)
+        Documentação: 
+            - https://www.zabbix.com/documentation/5.0/pt/manual/config/items/item
+            - https://www.zabbix.com/documentation/5.0/pt/manual/config/items/itemtypes/zabbix_agent
+
+        Crie alguns itens para o 'Inventario' (Todos como 'Zabbix agent)
+
+            - Inventario - MAC
+                system.hw.macaddr[enp0s3,full]
+                Type of information: Text
+                Applications: Inventario (Caso não tenha, coloque isto em 'New application')
+                Populares host inventory field: MAC Address A
+                * Add
+                * Volte em Configuration > Hosts > SRVFW-BERLIM (ou outro dispositivo) > Items > Inventario
+                * Selecione o item que acabará de criar > role a tela até o final > Execute now
+
+                NOTA: Vá em Configuration > Hosts > SRVFW-BERLIM (ou outro dispositivo) > Inventory > Clique sobre a opção "Automatic"
+
+            - Inventario - Pacotes
+                system.sw.packages[all,all,full]
+
+            - Inventario - OS
+                system.sw.os[full]
+
+--------------------------------------------------------------
+
+FILTRO DE INFORMAÇÕES POR DNS (Como saber se o uusário final alterou o DNS?)
+
+    Visualizamos o resolver com
+        cat /etc/resolv.conf
+        cat /etc/resolv.conf | grep nameserver
+        cat /etc/resolv.conf | grep nameserver | cut -d" " -f2
+
+    Como fazemos isso no Zabbix?
+        system.run[cat /etc/resolv.conf | grep nameserver | cut -d" " -f2]
+        Software application A
+
+        Erro: Remote commands are not enable...
+
+            No SRVFW-BERLIM
+                #cd /etc/zabbix
+                #vim zabbix_agentd.conf
+                    Linha 73
+                        Descomentar e trocar 0 por 1
+                #systemctl restart zabbix_agent.service
+
+        Execute o item novamente. Após isso, vá nos detalhes do inventário (Inventory > Hosts > SRVFW-BERLIM > Details)
