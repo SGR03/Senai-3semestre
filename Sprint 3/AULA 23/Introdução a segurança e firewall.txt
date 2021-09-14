@@ -1,0 +1,141 @@
+Introdução IPtables
+
+    DEFINIÇÃO
+
+        * Firewall é uma solução de segurança baseada em hardware (appliance) ou software que, a partir de um conjunto de regras ou instruções, 
+        analisa o tráfego de rede para determinar quais operações de transmissão ou recepção de dados podem ser executadas.
+
+        * "Parede de fogo", a tradução literal do nome, já deixa claro que o firewall se enquadra em uma espécie de barreira de defesa.
+
+        * A sua missão, por assim dizer, consiste basicamente em bloquear tráfego de dados indesejados e liberar acessos bem-vindos.
+
+    TIPOS DE FIREWALL
+
+        * Filtragem de pacotes (packet filtering) | Funciona até a camada 4
+
+        * Firewall de aplicação ou proxy de serviços (proxy services) | Funciona até a camada 7
+
+        Filtragem de pacotes (Packet Filtering)
+
+            * Este tipo de firewall toma as decisões baseadas nos parâmetros do pacote, como porta, endereço de origem/destino, estado da 
+            conexão e outros parâmetros do pacote.
+            * O firewall então pode negar o pacote (DROP) ou deixar o pacote passar (ACCEPT).
+
+        Firewall de Aplicação ou Proxy de Serviços (Proxy Services)
+
+            * Este tipo de firewall analisa o conteúdo do pacote para tomar suas decisões de filtragem.
+            * Firewalls deste tipo são mais intrusivos (pois analisam o conteúdo de tudo que passa por ele) e permitem um controle relacionado 
+            com o conteúdo do tráfego.
+
+IPTABLES
+
+    * Funciona através da comparação de regras para saber se um pacote tem ou não permissão para passar.
+
+    * Em firewalls mais restritivos, o pacote é bloqueado e registrado para que o administrador do sistema tenha conhecimento sobre o
+    que está acontecendo em seu ambiente.
+
+    SINTAXE
+
+        iptables [-t tabela] [opção] [chain] [dados] -j [ação]
+        aplicativo   >  informar tabela >   tabela >    opção >         mecanismo >         condicional >                                           pulo >          ação
+                              -t           * filter    -P (Policy)        INPUT              -s (source - IP, hostname, rede, FQDN)                -j (jump)       ACCEPT
+                                           * nat       -A (Append)        OUTPUT             -d (destination - IP, hostname, rede, FQDN)                            DROP
+                                           * mangle    -D (Delete)        FORWARD            -i (interface in - interface)
+                                                       -L (List)                             -o (interface out - interface)
+
+        TABELA
+
+            Filter -> tabela padrão, usada no tráfego de dados comum;
+            NAT (Network Address Translation) -> usada quando há ocorrência de NAT (geração de outra conexão);
+            Mangle -> raramente usada, utilizada para alterações especiais de pacotes (como modificar o tipo de serviço (TOS)).
+
+        POLÍTICA
+
+            Firewall Permissiva -> Liberar tudo para depois bloquear (Exemplo: Linux)
+            Firewall Restritiva -> Bloquear tudo para depois liberar (Exemplo: Windows)
+
+            * Mandatória
+            * Regra -> Está dentro da política
+
+        MECANISMO (É aqui que as políticas são visualizadas com mais clareza) - FILTER
+
+            * INPUT -> consultada para dados que chegam ao servidor;
+            * OUTPUT -> consultada para dados que saem do servidor;
+            * FORWARD -> consultada para dados que são redirecionados para outra interface de rede ou outra máquina.
+
+Introdução à Segurança da Informação
+
+    Segurança da informação está relacionada com proteção de um conjunto de dados, no sentido de preservar o valor que possuem para um 
+    indivíduo ou uma organização.
+
+Por que precisamos de segurança?
+
+    * Evolução da tecnologia focando a facilidade de uso;
+    * Aumento do uso de redes e interligação das aplicações;
+    * Diminuição do nível de conhecimento para a execução de um ataque avançado;
+    * Aumento da complexidade para administração de infraestrutura de computadores e gerenciamento.
+
+Princípios básicos de segurança da informação
+
+    Confidencialidade -> propriedade que limita o acesso a informação tão-somente às entidades legítimas, ou seja, àquelas autorizadas
+    pelo proprietário da informação.
+
+    Integridade -> propriedade que garante que a informação manipulada mantenha todas as características originais estabelecidas pelo 
+    proprietário da informação
+
+    Disponibilidade -> propriedade que garante que a informação esteja sempre disponível para o uso legítimo
+
+    Autenticidade -> garantia da origem da informação
+
+    Legalidade -> importante estarmos atentos as leis de cada país
+
+Ameaças 
+
+    Físicas
+        - Desabamento
+        - Raio
+        - Alagamento
+        - Acesso indevido de pessoas
+
+    Lógicas
+        - infecção por vírus
+        - Acessos remoto à rede
+        - Violação de senhas
+
+Ataques
+
+    Interno (70% dos ataques)
+        - Funcionários insatisfeitos
+        - Funcionários despreparados
+        - Espionagem
+
+    Externo
+        - Crackers
+        - Concorrentes
+        - Espionagem
+
+Mecanismos de segurança
+
+    Controles Físicos
+        - Portas
+        - Trancas
+        - Paredes
+        - Blindagens
+        - Entre outros
+
+    Controles Lógicos
+        - Criptografia
+        - Firewall
+        - Anti DDoS
+        - Entre outros
+
+Serviços de segurança
+
+    * Criação de Políticas de Segurança;
+    * Hardening de Servidores;
+    * Análise de Vulnerabilidade;
+    * Teste de invasão;
+    * Análise de Aplicação;
+    * Perícia Computacional;
+    * Treinamento de Colaboradores;
+    * Auditoria.
